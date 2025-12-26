@@ -19,7 +19,12 @@ function getHumanChoice() {
   return humanChoice;
 }
 
-function playRound(humanChoice, computerChoice) {
+function playRound() {
+  const humanChoice = getHumanChoice();
+  console.log("Human:", humanChoice);
+  const computerChoice = getComputerChoice();
+  console.log("Computer:", computerChoice)
+
   const humanChoiceLower = humanChoice.toLowerCase();
   const computerChoiceLower = computerChoice.toLowerCase();
   
@@ -33,23 +38,35 @@ function playRound(humanChoice, computerChoice) {
   
   if (losingCondition) {
     console.log(`You lose! ${computerChoice} beats ${humanChoice}!`);
-    computerScore += 1;
+    return "computer";
   } else if (winningCondition) {
     console.log(`You won! ${humanChoice} beats ${computerChoice}!`);
-    humanScore += 1;
+    return "human";
   } else {
     console.log("it's a tie!");
   }
-
-  console.log(`Score: Human: ${humanScore} | Computer: ${computerScore}`)
 }
 
-let humanScore = 0;
-let computerScore = 0;
+function playGame() {
+  let humanScore = 0;
+  let computerScore = 0;
+  
+  for(let i = 0; i < 5; i++) {
+    console.group(`Round ${i + 1}`);
+    let winner = playRound();
+    
+    switch(winner) {
+      case "computer":
+        computerScore += 1;
+        break;
+      case "human":
+        humanScore += 1;
+        break;
+    }
 
-const humanSelection = getHumanChoice();
-console.log("Human:", humanSelection);
-const computerSelection = getComputerChoice();
-console.log("Computer:", computerSelection)
+    console.log(`Score: Human: ${humanScore} | Computer: ${computerScore}`)
+    console.groupEnd();
+  }
+}
 
-playRound(humanSelection, computerSelection);
+playGame();
