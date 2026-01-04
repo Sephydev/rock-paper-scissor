@@ -1,72 +1,90 @@
 function getComputerChoice() {
   const randomNumber = Math.floor(Math.random() * 3) + 1;
+  let computerChoice = "";
 
   switch(randomNumber) {
     case 1 :
-      return "Rock";
+      computerChoice =  "Rock";
       break;
     case 2 :
-      return "Paper";
+      computerChoice = "Paper";
       break;
     case 3 :
-      return "Scissors";
-  }
+      computerChoice =  "Scissors";
+      break;
+    }
+
+    createElemAndAppend(`Computer choose: ${computerChoice}.`);
+    return computerChoice;
 }
 
-function getHumanChoice() {
-  const humanChoice = prompt("Please make a choice between 'Rock', 'Paper' or 'Scissors'.")
-
+function getHumanChoice(e) {
+  const humanChoice = e.target.textContent;
+  createElemAndAppend(`You choose: ${humanChoice}.`);
   return humanChoice;
 }
 
-function playRound() {
-  const humanChoice = getHumanChoice();
-  console.log("Human:", humanChoice);
+function createElemAndAppend(text) {
+  const para = document.createElement("p");
+  para.textContent = text;
+  resultContainer.appendChild(para);
+}
+
+function checkWinnerRound (humanChoice, computerChoice) {
+  const losingCondition = humanChoice === "rock" && computerChoice === "paper" 
+  || humanChoice === "paper" && computerChoice === "scissors"
+  || humanChoice === "scissors" && computerChoice === "rock";
+  
+  const winningCondition = humanChoice === "rock" && computerChoice === "scissors"
+  || humanChoice === "paper" && computerChoice === "rock"
+  || humanChoice === "scissors" && computerChoice === "paper";
+  
+  if (losingCondition) {
+    createElemAndAppend(`You lose! ${computerChoice} beats ${humanChoice}!`);
+    computerScore += 1;
+  } else if (winningCondition) {
+    createElemAndAppend(`You won! ${humanChoice} beats ${computerChoice}!`);
+    humanScore += 1;
+  } else {
+    createElemAndAppend("It's a tie!");
+  }
+
+}
+
+function checkWinnerGame () {
+  if (humanScore >= 5 || computerScore >= 5) {
+    buttons.forEach(btn => {
+      btn.removeEventListener("click", playRound);
+      createElemAndAppend(`The winner is ${humanScore >= 5 ? "You" : "the Computer"}!`);
+    })
+  }
+}
+
+function playRound(e) {
+  const humanChoice = getHumanChoice(e);
   const computerChoice = getComputerChoice();
-  console.log("Computer:", computerChoice)
 
   const humanChoiceLower = humanChoice.toLowerCase();
   const computerChoiceLower = computerChoice.toLowerCase();
+
+  checkWinnerRound(humanChoiceLower, computerChoiceLower);
+
+  // Display score
+  createElemAndAppend(`Player: ${humanScore} | Computer: ${computerScore}`);
   
-  const losingCondition = humanChoiceLower === "rock" && computerChoiceLower === "paper" 
-  || humanChoiceLower === "paper" && computerChoiceLower === "scissors"
-  || humanChoiceLower === "scissors" && computerChoiceLower === "rock";
+  // Separate round
+  createElemAndAppend('-------------------------------');
+
+  checkWinnerGame();
   
-  const winningCondition = humanChoiceLower === "rock" && computerChoiceLower === "scissors"
-  || humanChoiceLower === "paper" && computerChoiceLower === "rock"
-  || humanChoiceLower === "scissors" && computerChoiceLower === "paper";
-  
-  if (losingCondition) {
-    console.log(`You lose! ${computerChoice} beats ${humanChoice}!`);
-    return "computer";
-  } else if (winningCondition) {
-    console.log(`You won! ${humanChoice} beats ${computerChoice}!`);
-    return "human";
-  } else {
-    console.log("it's a tie!");
-  }
 }
 
-function playGame() {
-  let humanScore = 0;
-  let computerScore = 0;
-  
-  for(let i = 0; i < 5; i++) {
-    console.group(`Round ${i + 1}`);
-    let winner = playRound();
-    
-    switch(winner) {
-      case "computer":
-        computerScore += 1;
-        break;
-      case "human":
-        humanScore += 1;
-        break;
-    }
+const resultContainer = document.querySelector(".results");
+let humanScore = 0;
+let computerScore = 0;
 
-    console.log(`Score: Human: ${humanScore} | Computer: ${computerScore}`)
-    console.groupEnd();
-  }
-}
+const buttons = document.querySelectorAll("button");
 
-playGame();
+buttons.forEach(btn => {
+  btn.addEventListener("click", playRound);
+})
