@@ -12,3 +12,4 @@ The most easy part for me was 99% of the project, because I already have basic k
 ## What was the hardest part ?
 
 The hardest part was to refactor playRound to adapt it for multiple rounds.
+When adding the UI, the hardest part was to combine all the JavaScript, DOM and Events knowledge in order to get a clear and optimized code.
